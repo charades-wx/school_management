@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.UserTbMapper">
+  <resultMap id="BaseResultMap" type="com.bean.UserTb">
+    <id column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="student_id" jdbcType="INTEGER" property="studentId" />
+    <result column="role_id" jdbcType="INTEGER" property="roleId" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="user_ps" jdbcType="VARCHAR" property="userPs" />
+    <result column="user_realname" jdbcType="VARCHAR" property="userRealname" />
+    <result column="user_sex" jdbcType="VARCHAR" property="userSex" />
+    <result column="user_email" jdbcType="VARCHAR" property="userEmail" />
+    <result column="user_phone" jdbcType="VARCHAR" property="userPhone" />
+    <result column="user_address" jdbcType="VARCHAR" property="userAddress" />
+    <result column="user_idcard" jdbcType="VARCHAR" property="userIdcard" />
+    <result column="user_content" jdbcType="VARCHAR" property="userContent" />
+    <result column="logincount" jdbcType="INTEGER" property="logincount" />
+    <result column="regdate" jdbcType="DATE" property="regdate" />
+    <result column="managerid" jdbcType="INTEGER" property="managerid" />
+    <association property="role" javaType="com.bean.Role">
+         <id column="roleid" jdbcType="INTEGER" property="roleid" />
+         <result column="rolename" jdbcType="VARCHAR" property="rolename" />
+         <result column="rolestate" jdbcType="INTEGER" property="rolestate" />
+    </association>
+  </resultMap>
+  <select id="login" resultMap="BaseResultMap">
+      select * from user_tb u,role r
+      where r.roleid=u.role_id and user_name = #{userName}
+  </select>
+
+    <insert id="insertSelective" parameterType="com.bean.UserTb">
+        insert into user_tb
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="studentId != null">
+                student_id,
+            </if>
+            <if test="roleId != null">
+                role_id,
+            </if>
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="userPs != null">
+                user_ps,
+            </if>
+            <if test="userRealname != null">
+                user_realname,
+            </if>
+            <if test="userSex != null">
+                user_sex,
+            </if>
+            <if test="userEmail != null">
+                user_email,
+            </if>
+            <if test="userPhone != null">
+                user_phone,
+            </if>
+            <if test="userAddress != null">
+                user_address,
+            </if>
+            <if test="userIdcard != null">
+                user_idcard,
+            </if>
+            <if test="userContent != null">
+                user_content,
+            </if>
+            <if test="logincount != null">
+                logincount,
+            </if>
+            <if test="regdate != null">
+                regdate,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="studentId != null">
+                #{studentId,jdbcType=INTEGER},
+            </if>
+            <if test="roleId != null">
+                #{roleId,jdbcType=INTEGER},
+            </if>
+            <if test="userName != null">
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="userPs != null">
+                #{userPs,jdbcType=VARCHAR},
+            </if>
+            <if test="userRealname != null">
+                #{userRealname,jdbcType=VARCHAR},
+            </if>
+            <if test="userSex != null">
+                #{userSex,jdbcType=VARCHAR},
+            </if>
+            <if test="userEmail != null">
+                #{userEmail,jdbcType=VARCHAR},
+            </if>
+            <if test="userPhone != null">
+                #{userPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="userAddress != null">
+                #{userAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="userIdcard != null">
+                #{userIdcard,jdbcType=VARCHAR},
+            </if>
+            <if test="userContent != null">
+                #{userContent,jdbcType=VARCHAR},
+            </if>
+            <if test="logincount != null">
+                #{logincount,jdbcType=INTEGER},
+            </if>
+            <if test="regdate != null">
+                #{regdate,jdbcType=DATE},
+            </if>
+        </trim>
+    </insert>
+    <delete id="delete" parameterType="int">
+        delete from user_tb
+        where user_id = #{userId}
+    </delete>
+    <select id="findone" resultMap="BaseResultMap">
+      select * from user_tb u,role r
+      where r.roleid=u.role_id and user_id = #{userId}
+  </select>
+
+  <update id="countadd" parameterType="userTb">
+      update user_tb set logincount=#{logincount} where user_id = #{userId}
+  </update>
+  <update id="update" parameterType="userTb">
+        update user_tb set user_name=#{userName},user_realname=#{userRealname},user_sex=#{userSex},user_email=#{userEmail},user_phone=#{userPhone},user_address=#{userAddress},user_idcard=#{userIdcard},user_content=#{userContent} where user_id = #{userId}
+  </update>
+    <update id="updatepass" parameterType="userTb">
+      update user_tb set user_ps=#{userPs} where user_id = #{userId}
+  </update>
+
+    <select id="findalluser" resultMap="BaseResultMap">
+      select * from user_tb ut,role r where r.roleid=ut.role_id
+    </select>
+
+  <select id="selectbyid" resultMap="BaseResultMap">
+      select * from user_tb where user_id = #{userId}
+  </select>
+  <select id="findall" parameterType="map" resultMap="BaseResultMap">
+      select * from user_tb ut,role r,user_class_major ucm
+      where ut.user_id=ucm.userid and r.roleid=ut.role_id
+      <if test="did!=0">
+        and  ucm.departid=#{did}
+      </if>
+      <if test="mid!=0">
+          and  ucm.majorid=#{mid}
+      </if>
+      <if test="tea!=null and tea!=''">
+          and  r.rolename=#{tea}
+      </if>
+  </select>
+    <update id="updateByPrimaryKeySelective" parameterType="com.bean.UserTb">
+        update user_tb
+        <set>
+            <if test="studentId != null">
+                student_id = #{studentId,jdbcType=INTEGER},
+            </if>
+            <if test="roleId != null">
+                role_id = #{roleId,jdbcType=INTEGER},
+            </if>
+            <if test="userName != null">
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="userPs != null">
+                user_ps = #{userPs,jdbcType=VARCHAR},
+            </if>
+            <if test="userRealname != null">
+                user_realname = #{userRealname,jdbcType=VARCHAR},
+            </if>
+            <if test="userSex != null">
+                user_sex = #{userSex,jdbcType=VARCHAR},
+            </if>
+            <if test="userEmail != null">
+                user_email = #{userEmail,jdbcType=VARCHAR},
+            </if>
+            <if test="userPhone != null">
+                user_phone = #{userPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="userAddress != null">
+                user_address = #{userAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="userIdcard != null">
+                user_idcard = #{userIdcard,jdbcType=VARCHAR},
+            </if>
+            <if test="userContent != null">
+                user_content = #{userContent,jdbcType=VARCHAR},
+            </if>
+            <if test="logincount != null">
+                logincount = #{logincount,jdbcType=INTEGER},
+            </if>
+            <if test="regdate != null and regdate!=''">
+                regdate = #{regdate,jdbcType=DATE},
+            </if>
+        </set>
+        where user_id = #{userId,jdbcType=INTEGER}
+    </update>
+</mapper>
